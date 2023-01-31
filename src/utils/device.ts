@@ -1,5 +1,5 @@
 import { Dimensions, Platform } from 'react-native';
-import { CustomerAudits } from '@ondato/api/clients/identity/types';
+import { CustomerAudits } from '../api/clients/identity/types';
 
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;

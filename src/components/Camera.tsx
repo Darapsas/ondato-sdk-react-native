@@ -1,13 +1,13 @@
 import React, { forwardRef, useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { CameraDevice, Camera as RNCamera } from 'react-native-vision-camera';
-import { useCameraPermissions } from '@ondato/hooks';
-import { center, flex1, fullHeight, fullWidth, itemsStretch, row } from '@ondato/theme/common';
-import { Theme } from '@ondato/theme/types';
 import hexToRgba from 'hex-to-rgba';
-import { useTheme, useThemeAwareObject } from '@ondato/theme/hooks';
 import DimensionContainer, { Dimensions } from './DimensionContainer';
 import Svg, { IconName } from './Svg';
+import { useCameraPermissions } from '../hooks';
+import { center, flex1, fullHeight, fullWidth, itemsStretch, row } from '../theme/common';
+import { Theme } from '../theme/types';
+import { useTheme, useThemeAwareObject } from '../theme/hooks';
 
 export interface CameraProps {
   iconName?: IconName;
@@ -58,6 +58,7 @@ const styles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
       position: 'relative',
+      backgroundColor: theme.colors.black,
     },
     crop: {
       ...flex1,

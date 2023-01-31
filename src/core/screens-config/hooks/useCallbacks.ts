@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import ScreensConfigContext from '@ondato/core/screens-config/provider/ScreensConfigContext';
+import ScreensConfigContext from '../provider/ScreensConfigContext';
 
 const useCallbacks = () => {
   const { onSuccess, onError, onClose } = useContext(ScreensConfigContext);

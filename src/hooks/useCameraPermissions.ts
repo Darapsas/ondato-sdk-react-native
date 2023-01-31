@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
-import { LogActions } from '@ondato/api/clients/identity/constants';
 import useLogging from './useLogging';
+import { LogActions } from '../api/clients/identity/constants';
 
 const useCameraPermissions = () => {
   const { log } = useLogging();
@@ -12,7 +12,9 @@ const useCameraPermissions = () => {
   const requestCameraPermissions = useCallback(async () => {
     const permission = await Camera.requestCameraPermission();
     const isAuthorized = permission === 'authorized';
-    if (!isAuthorized) log(LogActions.noCameraPermissions);
+    if (!isAuthorized) {
+      log(LogActions.noCameraPermissions);
+    }
 
     setIsGranted(isAuthorized);
   }, [log]);

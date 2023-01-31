@@ -1,5 +1,5 @@
 import { CommonActions } from '@react-navigation/native';
-import { documentSelectRoute } from '@ondato/navigation/types';
+import { documentSelectRoute } from './types';
 import { RootStackParamList } from './RootNavigator';
 
 export const reset = (name: keyof RootStackParamList, params?: object) => {

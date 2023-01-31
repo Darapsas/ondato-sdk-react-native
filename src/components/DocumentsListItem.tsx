@@ -1,12 +1,12 @@
 import React, { FC, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { flex1, row } from '@ondato/theme/common';
-import { useTheme } from '@ondato/theme/hooks';
-import { DocumentId } from '@ondato/modules/kyc/types';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import PrimaryText from './PrimaryText';
 import Svg, { IconName } from './Svg';
+import { DocumentId } from '../modules/kyc/types';
+import { useTheme } from '../theme/hooks';
+import { flex1, row } from '../theme/common';
 
 export interface DocumentsListItemProps {
   id: DocumentId;
@@ -29,10 +29,12 @@ const DocumentsListItem: FC<DocumentsListItemProps> = (props) => {
   return (
     <TouchableOpacity style={[row, theme.paddings.vertical.xl]} onPress={onPress}>
       <View style={[row, flex1]}>
-        <Svg color={theme.colors.primary} name={iconName} style={theme.margins.right.l} />
-        <PrimaryText>{name}</PrimaryText>
+        <Svg width={80} height={80} color="primary" name={iconName} style={theme.margins.right.l} />
+        <PrimaryText numberOfLines={1} ellipsizeMode="tail">
+          {name}
+        </PrimaryText>
       </View>
-      <Svg color={theme.colors.text} name="arrowRight" width={32} height={32} />
+      <Svg color="text" name="arrowRight" width={32} height={32} />
     </TouchableOpacity>
   );
 };

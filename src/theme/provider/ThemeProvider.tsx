@@ -4,7 +4,7 @@ import { ConfigurableTheme, Theme } from '../types';
 import lightTheme from '../lightTheme';
 
 interface Props {
-  configurableTheme: ConfigurableTheme;
+  configurableTheme?: ConfigurableTheme;
   children: React.ReactNode;
 }
 
@@ -12,8 +12,14 @@ const ThemeProvider: FC<Props> = (props) => {
   const { children, configurableTheme } = props;
 
   const initialTheme = useMemo<Theme>(() => {
+    if (!configurableTheme) {
+      return lightTheme;
+    }
+
     const configuredColors = { ...lightTheme.colors, ...configurableTheme.colors };
-    return { ...lightTheme, colors: configuredColors };
+    const configuredFonts = { ...lightTheme.fonts, ...configurableTheme.fonts };
+
+    return { ...lightTheme, colors: configuredColors, fonts: configuredFonts };
   }, [configurableTheme]);
 
   const [theme, setTheme] = useState<Theme>(initialTheme);

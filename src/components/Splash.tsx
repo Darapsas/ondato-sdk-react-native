@@ -1,15 +1,12 @@
 import React, { FC } from 'react';
-import { center, flex1 } from '@ondato/theme/common';
 import { View } from 'react-native';
-import { useTheme } from '@ondato/theme/hooks';
 import Svg from './Svg';
+import { center, flex1 } from '../theme/common';
 
 const Splash: FC = () => {
-  const theme = useTheme();
-
   return (
     <View style={[flex1, center]}>
-      <Svg color={theme.colors.primary} name="logo" height={104} />
+      <Svg color="primary" name="logo" height={104} />
     </View>
   );
 };

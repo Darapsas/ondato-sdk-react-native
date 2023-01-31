@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Theme } from '@ondato/theme/types';
-import { useThemeAwareObject } from '@ondato/theme/hooks';
+import { Theme } from '../theme/types';
+import { useThemeAwareObject } from '../theme/hooks';
 
 export interface ProgressBarProps {
   progress: number;

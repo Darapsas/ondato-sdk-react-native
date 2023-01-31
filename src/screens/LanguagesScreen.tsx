@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import { Container, ListSeparator, PrimaryText, ScreenContainer, Svg } from '@ondato/components';
 import { FlatList, ListRenderItemInfo, TouchableOpacity } from 'react-native';
-import { row } from '@ondato/theme/common';
-import { LanguagesScreenProps } from '@ondato/navigation/types';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@ondato/theme/hooks';
+import { Container, ListSeparator, PrimaryText, ScreenContainer, Svg } from '../components';
+import { row } from '../theme/common';
+import { LanguagesScreenProps } from '../navigation/types';
+import { useTheme } from '../theme/hooks';
 import { languages, Locales } from '../i18n/constants';
 import { Language } from '../i18n/types';
 
@@ -16,8 +16,11 @@ const LanguagesScreen: FC<LanguagesScreenProps> = (props) => {
   const theme = useTheme();
 
   const handleLanguageSelect = async (code: Locales) => {
-    if (code === Locales.system) await i18n.changeLanguage();
-    else await i18n.changeLanguage(code);
+    if (code === Locales.system) {
+      await i18n.changeLanguage();
+    } else {
+      await i18n.changeLanguage(code);
+    }
     navigation.goBack();
   };
 
@@ -25,10 +28,7 @@ const LanguagesScreen: FC<LanguagesScreenProps> = (props) => {
     const language = item.item;
 
     return (
-      <TouchableOpacity
-        style={theme.paddings.vertical.xl}
-        onPress={() => handleLanguageSelect(language.value)}
-      >
+      <TouchableOpacity style={theme.paddings.vertical.xl} onPress={() => handleLanguageSelect(language.value)}>
         <PrimaryText fontSize="m">{language.label}</PrimaryText>
       </TouchableOpacity>
     );
@@ -41,7 +41,7 @@ const LanguagesScreen: FC<LanguagesScreenProps> = (props) => {
           <PrimaryText fontSize="m" style={theme.margins.right.s}>
             {t('buttons.close')}
           </PrimaryText>
-          <Svg color={theme.colors.text} name="close" width={24} height={24} />
+          <Svg color="text" name="close" width={24} height={24} />
         </TouchableOpacity>
       </Container>
       <FlatList

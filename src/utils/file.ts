@@ -1,16 +1,12 @@
 import fs from 'react-native-fs';
-import { DocumentImageFileType } from '@ondato/api/clients/kyc/types';
+import { DocumentImageFileType } from '../api/clients/kyc/types';
 
-export const getBase64Image = (path: string) => {
+export const getBase64File = (path: string) => {
   return fs.readFile(path, 'base64');
 };
 
 export const getImageFileType = (): DocumentImageFileType => {
   return 'Png';
-};
-
-export const getAdditionalDocumentFileType = (): DocumentImageFileType => {
-  return 'jpeg';
 };
 
 export const getImageUri = (path: string) => {

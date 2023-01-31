@@ -1,49 +1,33 @@
 import React, { FC, useCallback, useEffect } from 'react';
-import { PrimaryText, ScreenContainer } from '@ondato/components';
-import { center } from '@ondato/theme/common';
 import { ActivityIndicator } from 'react-native';
-import {
-  errorRoute,
-  LoadingScreenProps,
-  registrationSuccessRoute,
-  resultsWaitingRoute,
-  successRoute,
-} from '@ondato/navigation/types';
-import { useCompleteIdentification } from '@ondato/hooks';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from '@ondato/core/store';
-import { selectIsResultsWaitingEnabled } from '@ondato/modules/kyc/selectors';
-import { useTheme } from '@ondato/theme/hooks';
-import { reset } from '@ondato/navigation/actions';
+import { PrimaryText, ScreenContainer } from '../components';
+import { center } from '../theme/common';
+import { LoadingScreenProps, registrationSuccessRoute, resultsWaitingRoute } from '../navigation/types';
+import { useVerifyIdentification } from '../hooks';
+import { useAppSelector } from '../core/store';
+import { selectIsResultsWaitingEnabled } from '../modules/kyc/selectors';
+import { useTheme } from '../theme/hooks';
+import { reset } from '../navigation/actions';
 
 const LoadingScreen: FC<LoadingScreenProps> = (props) => {
   const { navigation } = props;
   const isResultsWaitingEnabled = useAppSelector(selectIsResultsWaitingEnabled);
 
   const theme = useTheme();
-  const { complete } = useCompleteIdentification();
+  const { verify } = useVerifyIdentification();
   const { t } = useTranslation();
 
   const completeIdentification = useCallback(async () => {
-    const { status, statusReason } = await complete();
+    await verify();
 
-    if (status === 'Rejected') {
-      navigation.replace(errorRoute, { rejectionReason: statusReason });
+    if (!isResultsWaitingEnabled) {
+      navigation.dispatch(reset(registrationSuccessRoute));
       return;
     }
 
-    if (status === 'Approved') {
-      navigation.dispatch(reset(successRoute));
-      return;
-    }
-
-    if (isResultsWaitingEnabled) {
-      navigation.dispatch(reset(resultsWaitingRoute));
-      return;
-    }
-
-    navigation.dispatch(reset(registrationSuccessRoute));
-  }, [complete, navigation, isResultsWaitingEnabled]);
+    navigation.dispatch(reset(resultsWaitingRoute));
+  }, [verify, navigation, isResultsWaitingEnabled]);
 
   useEffect(() => {
     completeIdentification();

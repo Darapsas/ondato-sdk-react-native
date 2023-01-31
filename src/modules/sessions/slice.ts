@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { reset } from '../global/slice';
 
 export interface SessionsState {
   accessToken: string | null;
@@ -20,6 +21,9 @@ const sessionsSlice = createSlice({
     setFullAccessToken: (state, action: PayloadAction<{ fullAccessToken: string }>) => {
       state.fullAccessToken = action.payload.fullAccessToken;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(reset, () => initialState);
   },
 });
 

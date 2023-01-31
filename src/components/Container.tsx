@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
-import { useThemeAwareObject } from '@ondato/theme/hooks';
-import { Theme } from '@ondato/theme/types';
+import { useThemeAwareObject } from '../theme/hooks';
+import { Theme } from '../theme/types';
 
 const Container: FC<ViewProps> = (props) => {
   const { children, style, ...rest } = props;

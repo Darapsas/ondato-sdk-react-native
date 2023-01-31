@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { DeviceUtils, DimensionsUtils } from '@ondato/utils';
+import { DeviceUtils, DimensionsUtils } from '../utils';
 
 export interface Dimensions {
   x: number;

@@ -1,6 +1,6 @@
 import { StatusBar as RNStatusBar } from 'react-native';
 import React, { FC } from 'react';
-import { useTheme } from '@ondato/theme/hooks';
+import { useTheme } from '../theme/hooks';
 
 const StatusBar: FC = () => {
   const theme = useTheme();

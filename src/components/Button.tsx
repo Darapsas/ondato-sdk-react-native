@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
-import { useThemeAwareObject } from '@ondato/theme/hooks';
-import { Theme } from '@ondato/theme/types';
-import { center } from '@ondato/theme/common';
+import { useThemeAwareObject } from '../theme/hooks';
+import { Theme } from '../theme/types';
+import { center } from '../theme/common';
 
 type Variant = 'primary' | 'secondary';
 
@@ -27,7 +27,9 @@ const Button: FC<ButtonProps> = (props) => {
       style={[variantStyles.container, themedStyles.container, style]}
       onPress={onPress}
     >
-      <Text style={[variantStyles.label, themedStyles.label, labelStyle]}>{label}</Text>
+      <Text adjustsFontSizeToFit numberOfLines={1} style={[variantStyles.label, themedStyles.label, labelStyle]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 };

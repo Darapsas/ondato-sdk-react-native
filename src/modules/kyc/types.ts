@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { LoadingScreenProps, OnboardingScreenProps, SuccessScreenProps } from '@ondato/navigation/types';
+import { LoadingScreenProps, OnboardingScreenProps, SuccessScreenProps } from '../../navigation/types';
 
 export type DocumentId = 'IdCard' | 'DriverLicense' | 'Passport';
 export type AdditionalDocumentId = 'SelfieWithDoc';

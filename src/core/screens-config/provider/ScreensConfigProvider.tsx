@@ -1,10 +1,12 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
-import { Callbacks, UserConfig } from '@ondato/modules/kyc/types';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import i18n from 'i18next';
-import { setIdentityVerificationId, setUserConfig } from '@ondato/modules/kyc/slice';
-import { useAppDispatch } from '@ondato/core/store';
-import { Locales } from '@ondato/i18n/constants';
 import ScreensConfigContext, { ScreensConfigContextValue } from './ScreensConfigContext';
+import { Callbacks, UserConfig } from '../../../modules/kyc/types';
+import { setIdentityVerificationId, setUserConfig } from '../../../modules/kyc/slice';
+import { useAppDispatch } from '../../store';
+import { Locales } from '../../../i18n/constants';
+import { reset } from '../../../modules/global/slice';
+import { useCloseAppHandler } from '../../../hooks';
 
 interface Props extends UserConfig, Callbacks {
   locale: Locales;
@@ -14,26 +16,48 @@ interface Props extends UserConfig, Callbacks {
 const ScreensConfigProvider: FC<PropsWithChildren<Props>> = (props) => {
   const { identityVerificationId, locale, children, onError, onSuccess, onClose, ...userConfig } = props;
 
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const init = useCallback(async () => {
+    if (isInitialized) {
+      return;
+    }
+
+    setIsInitialized(true);
     await i18n.changeLanguage(locale);
-    dispatch(setIdentityVerificationId({ identityVerificationId }));
-    dispatch(setUserConfig({ userConfig }));
-  }, [locale, identityVerificationId, userConfig, dispatch]);
+    await dispatch(setIdentityVerificationId({ identityVerificationId }));
+    await dispatch(setUserConfig({ userConfig }));
+  }, [locale, identityVerificationId, userConfig, dispatch, isInitialized]);
+
+  const saveSdkState = useCallback(async () => {
+    await dispatch(reset());
+  }, [dispatch]);
 
   const handleOnClose = useCallback(async () => {
-    // TODO: stop screen recording
-    onClose();
-  }, [onClose]);
+    await saveSdkState();
+    setTimeout(() => onClose());
+  }, [onClose, saveSdkState]);
+
+  const handleOnSuccess = useCallback(async () => {
+    await saveSdkState();
+    setTimeout(() => onSuccess());
+  }, [onSuccess, saveSdkState]);
+
+  const handleOnError = useCallback(async () => {
+    await saveSdkState();
+    setTimeout(() => onError());
+  }, [onError, saveSdkState]);
+
+  useCloseAppHandler(handleOnClose);
 
   useEffect(() => {
     init();
   }, [init]);
 
   const memoizedValue = useMemo<ScreensConfigContextValue>(
-    () => ({ onError, onSuccess, onClose: handleOnClose }),
-    [onError, onSuccess, handleOnClose]
+    () => ({ onError: handleOnError, onSuccess: handleOnSuccess, onClose: handleOnClose }),
+    [handleOnError, handleOnSuccess, handleOnClose]
   );
 
   return <ScreensConfigContext.Provider value={memoizedValue}>{children}</ScreensConfigContext.Provider>;

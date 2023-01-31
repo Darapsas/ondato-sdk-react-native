@@ -1,14 +1,16 @@
-import { useAppSelector } from '@ondato/core/store';
-import { selectKycId } from '@ondato/modules/kyc/selectors';
-import { useMutation } from 'react-query';
-import { KycClient } from '@ondato/api/clients';
-import { UploadAdditionalDocumentRequest } from '@ondato/api/clients/kyc/types';
+import { useMutation } from '@tanstack/react-query';
+import { useAppSelector } from '../core/store';
+import { selectKycId } from '../modules/kyc/selectors';
+import { KycClient } from '../api/clients';
+import { UploadAdditionalDocumentRequest } from '../api/clients/kyc/types';
 
 const useUploadAdditionalDocument = () => {
   const kycId = useAppSelector(selectKycId);
 
   const mutationFn = async (request: UploadAdditionalDocumentRequest) => {
-    if (!kycId) throw new Error('KycIdentification id is not found');
+    if (!kycId) {
+      throw new Error('KycIdentification id is not found');
+    }
     await KycClient.uploadAdditionalDocument(kycId, request);
   };
 

@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '@ondato/navigation/RootNavigator';
+import { RootStackParamList } from './RootNavigator';
 
 export type InitialRoute = 'Initial';
 export const initialRoute: InitialRoute = 'Initial';

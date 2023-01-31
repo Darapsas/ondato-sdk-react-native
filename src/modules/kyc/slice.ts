@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BackendConfig, Config, UserConfig } from './types';
 import { initialConfig } from './constants';
+import { reset } from '../global/slice';
 
 export interface KycState {
   kycId: string | null;
@@ -30,6 +31,9 @@ const kycSlice = createSlice({
     setUserConfig: (state, action: PayloadAction<{ userConfig: UserConfig }>) => {
       state.config = { ...state.config, ...action.payload.userConfig };
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(reset, () => initialState);
   },
 });
 

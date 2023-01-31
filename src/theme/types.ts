@@ -1,11 +1,14 @@
+import { TextStyle } from 'react-native';
+
 export interface ConfigurableColors {
-  text: string;
-  primary: string;
-  background: string;
+  text?: string;
+  primary?: string;
+  background?: string;
 }
 
 export interface ConfigurableTheme {
-  colors: ConfigurableColors;
+  colors?: ConfigurableColors;
+  fonts?: Fonts;
 }
 
 export interface Colors extends ConfigurableColors {
@@ -94,7 +97,7 @@ export type Paddings = PaddingVariant<'base', 'padding'> &
 
 export interface FontVariant {
   fontFamily: string;
-  fontWeight: '400' | '600' | '700';
+  fontWeight: TextStyle['fontWeight'];
 }
 
 export interface Fonts {

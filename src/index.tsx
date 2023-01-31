@@ -1,23 +1,24 @@
-import React, { FC, useMemo } from 'react';
-import { QueryClientProvider } from 'react-query';
-import queryClient from '@ondato/core/query';
+import React, { FC, memo, useMemo } from 'react';
 import { Provider } from 'react-redux';
-import { persistor, store } from '@ondato/core/store';
-import { Splash, StatusBar } from '@ondato/components';
-import RootNavigator from '@ondato/navigation/RootNavigator';
-import { ScreenConfigProvider } from '@ondato/core/screens-config/provider';
-import { PersistGate } from 'redux-persist/integration/react';
-import { ThemeProvider } from '@ondato/theme/provider';
-import { Callbacks, UserConfig } from '@ondato/modules/kyc/types';
-import { ErrorBoundary } from '@ondato/core/error-boundary';
-import { ConfigurableTheme } from '@ondato/theme/types';
-import lightTheme from '@ondato/theme/lightTheme';
+import { QueryClientProvider } from '@tanstack/react-query';
+import queryClient from './core/query';
+import { store } from './core/store';
+import { StatusBar } from './components';
+import RootNavigator from './navigation/RootNavigator';
+import { ScreenConfigProvider } from './core/screens-config/provider';
+import { ThemeProvider } from './theme/provider';
+import { Callbacks, UserConfig } from './modules/kyc/types';
+import { ErrorBoundary } from './core/error-boundary';
+import { ConfigurableTheme } from './theme/types';
 import { Locales } from './i18n/constants';
 import { setupTranslations } from './i18n';
+import { GlobalLoader } from './core/global-loader';
+import Toast from 'react-native-toast-message';
+import { ConfigProvider } from './core/config/provider';
 
 setupTranslations();
 
-export interface SdkProps {
+export interface OndatoSdkProps {
   identityVerificationId: string;
   onError: () => void;
   onClose: () => void;
@@ -29,23 +30,24 @@ export interface SdkProps {
   theme?: ConfigurableTheme;
 }
 
-const App: FC<SdkProps> = (props) => {
+const OndatoSdk: FC<OndatoSdkProps> = (props) => {
   const {
     identityVerificationId,
     locale = Locales.en,
-    isLoggingEnabled,
-    isConsentEnabled,
-    isOnboardingEnabled,
+    isLoggingEnabled = true,
+    isConsentEnabled = true,
+    isOnboardingEnabled = true,
     onError,
     onSuccess,
     onClose,
+    theme,
   } = props;
 
   const config = useMemo<UserConfig & Callbacks>(
     () => ({
-      isConsentEnabled: isConsentEnabled ?? true,
-      isOnboardingEnabled: isOnboardingEnabled ?? true,
-      isLoggingEnabled: isLoggingEnabled ?? true,
+      isConsentEnabled,
+      isOnboardingEnabled,
+      isLoggingEnabled,
       onError,
       onSuccess,
       onClose,
@@ -53,33 +55,25 @@ const App: FC<SdkProps> = (props) => {
     [isConsentEnabled, isOnboardingEnabled, isLoggingEnabled, onError, onSuccess, onClose]
   );
 
-  const configurableTheme = useMemo<ConfigurableTheme>(
-    () => ({
-      colors: {
-        text: lightTheme.colors.text,
-        background: lightTheme.colors.background,
-        primary: lightTheme.colors.primary,
-      },
-    }),
-    []
-  );
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <PersistGate loading={<Splash />} persistor={persistor}>
-            <ScreenConfigProvider locale={locale} identityVerificationId={identityVerificationId} {...config}>
-              <ThemeProvider configurableTheme={configurableTheme}>
-                <StatusBar />
-                <RootNavigator />
-              </ThemeProvider>
-            </ScreenConfigProvider>
-          </PersistGate>
+          <ScreenConfigProvider locale={locale} identityVerificationId={identityVerificationId} {...config}>
+            <ThemeProvider configurableTheme={theme}>
+              <StatusBar />
+              <GlobalLoader>
+                <ConfigProvider>
+                  <RootNavigator />
+                </ConfigProvider>
+              </GlobalLoader>
+            </ThemeProvider>
+          </ScreenConfigProvider>
         </Provider>
       </QueryClientProvider>
+      <Toast />
     </ErrorBoundary>
   );
 };
 
-export default App;
+export default memo(OndatoSdk);

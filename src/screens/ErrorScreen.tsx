@@ -1,14 +1,14 @@
-import React, { FC, useMemo } from 'react';
-import { ErrorScreenProps } from '@ondato/navigation/types';
-import { Button, Container, PrimaryText, ScreenContainer, Svg } from '@ondato/components';
-import { center, flex1 } from '@ondato/theme/common';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRetryIdentification } from '@ondato/hooks';
-import { resetToDocumentSelectRoute } from '@ondato/navigation/actions';
-import { useTheme } from '@ondato/theme/hooks';
-import { CriticalReasons, RejectionReasons } from '@ondato/api/clients/kyc/constants';
-import { useCallbacks } from '@ondato/core/screens-config/hooks';
 import { TFunction } from 'i18next';
+import { ErrorScreenProps } from '../navigation/types';
+import { Button, Container, PrimaryText, ScreenContainer, Svg } from '../components';
+import { center, flex1, flexShrink, row, spaceBetween } from '../theme/common';
+import { useCompleteIdentification, useRetryIdentification } from '../hooks';
+import { resetToDocumentSelectRoute } from '../navigation/actions';
+import { useTheme } from '../theme/hooks';
+import { CriticalReasons, RejectionReasons } from '../api/clients/kyc/constants';
+import { useCallbacks } from '../core/screens-config/hooks';
 
 interface PageContent {
   title: string;
@@ -23,39 +23,49 @@ const ErrorScreen: FC<ErrorScreenProps> = (props) => {
   const { onError } = useCallbacks();
   const theme = useTheme();
   const { t } = useTranslation();
-  const { retry, isLoading } = useRetryIdentification();
+  const { retry } = useRetryIdentification();
+  const { complete, isLoading } = useCompleteIdentification();
 
-  const { title, description } = useMemo<PageContent>(
-    () => content(t)[rejectionReason],
-    [rejectionReason, t]
-  );
-  const isCriticalReason = CriticalReasons.includes(rejectionReason);
+  const pageContent = useMemo<PageContent | undefined>(() => content(t)[rejectionReason], [rejectionReason, t]);
+  const isCriticalReason = useMemo<boolean>(() => CriticalReasons.includes(rejectionReason), [rejectionReason]);
 
-  const handleOnRetry = async () => {
+  const handleOnRetry = useCallback(async () => {
     await retry();
     navigation.dispatch(resetToDocumentSelectRoute());
-  };
+  }, [retry, navigation]);
+
+  const handleOnClose = useCallback(async () => {
+    await complete();
+    onError();
+  }, [onError, complete]);
 
   return (
-    <ScreenContainer isLoading={isLoading}>
+    <ScreenContainer>
       <Container style={[flex1, center]}>
-        <Svg
-          color={theme.colors.primary}
-          name="error"
-          style={theme.margins.bottom.xxl}
-          width={72}
-          height={72}
-        />
+        <Svg color="primary" name="error" style={theme.margins.bottom.xxl} width={72} height={72} />
         <PrimaryText style={theme.margins.bottom.l} fontSize="xl" fontWeight="bold" center>
-          {title}
+          {pageContent?.title ?? t('reject_reasons.unknown.title')}
         </PrimaryText>
         <PrimaryText fontSize="m" center>
-          {description}
+          {pageContent?.description ?? t('reject_reasons.unknown.description')}
         </PrimaryText>
       </Container>
-      <Container style={[center, theme.paddings.vertical.l]}>
-        {isCriticalReason && <Button onPress={onError} label={t('buttons.close')} />}
-        {!isCriticalReason && <Button onPress={handleOnRetry} label={t('buttons.try_again')} />}
+      <Container style={[row, isCriticalReason ? center : spaceBetween, theme.paddings.vertical.l]}>
+        <Button
+          disabled={isLoading}
+          style={flexShrink}
+          variant="secondary"
+          onPress={handleOnClose}
+          label={t('buttons.close')}
+        />
+        {!isCriticalReason && (
+          <Button
+            variant="primary"
+            style={[flexShrink, theme.margins.left.m]}
+            onPress={handleOnRetry}
+            label={t('buttons.try_again')}
+          />
+        )}
       </Container>
     </ScreenContainer>
   );

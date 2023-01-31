@@ -8,7 +8,6 @@ export { default as DocumentCaptureScreen } from './DocumentCaptureScreen';
 export { default as DocumentPreviewScreen } from './DocumentPreviewScreen';
 export { default as LoadingScreen } from './LoadingScreen';
 export { default as ResultsWaitingScreen } from './ResultsWaitingScreen';
-export { default as InitialScreen } from './InitialScreen';
 export { default as SuccessScreen } from './SuccessScreen';
 export { default as ErrorScreen } from './ErrorScreen';
 export { default as RegistrationSuccessScreen } from './RegistrationSuccessScreen';

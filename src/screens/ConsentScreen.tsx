@@ -1,20 +1,23 @@
 import React, { FC, useEffect, useState } from 'react';
-import { ConsentScreenProps } from '@ondato/navigation/types';
-import { Button, Container, PrimaryText, ScreenContainer, Svg } from '@ondato/components';
 import { useTranslation } from 'react-i18next';
-import { Alert, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from 'react-native';
-import { center, itemsStart, row, spaceBetween } from '@ondato/theme/common';
-import { ScrollUtils } from '@ondato/utils';
-import { useAppSelector } from '@ondato/core/store';
-import { useConsent, useLogging } from '@ondato/hooks';
-import { useTheme } from '@ondato/theme/hooks';
-import { selectAfterConsentRouteName } from '@ondato/modules/kyc/selectors';
-import { LogActions } from '@ondato/api/clients/identity/constants';
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from 'react-native';
+import { ConsentScreenProps } from '../navigation/types';
+import { Button, Container, PrimaryText, ScreenContainer, Svg } from '../components';
+import { center, flexShrink, itemsStart, row, spaceBetween } from '../theme/common';
+import { ScrollUtils } from '../utils';
+import { useAppSelector } from '../core/store';
+import { useConsent, useLogging } from '../hooks';
+import { useTheme } from '../theme/hooks';
+import { selectAfterConsentRouteName } from '../modules/kyc/selectors';
+import { LogActions } from '../api/clients/identity/constants';
+import { useCallbacks } from '../core/screens-config/hooks';
+import { reset } from '../navigation/actions';
 
 const ConsentScreen: FC<ConsentScreenProps> = (props) => {
   const { navigation } = props;
   const nextRouteName = useAppSelector(selectAfterConsentRouteName);
 
+  const { onClose } = useCallbacks();
   const { log } = useLogging();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -27,21 +30,25 @@ const ConsentScreen: FC<ConsentScreenProps> = (props) => {
   }, [log]);
 
   const handleOnScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (isEndReached) return;
+    if (isEndReached) {
+      return;
+    }
     const isCloseToBottom = ScrollUtils.isCloseToBottom(event.nativeEvent);
-    if (isCloseToBottom) setIsEndReached(true);
+    if (isCloseToBottom) {
+      setIsEndReached(true);
+    }
   };
 
   const handleOnAgree = async () => {
     await consent({ isConsented: true });
     log(LogActions.termsAgreed);
-    navigation.replace(nextRouteName);
+    navigation.dispatch(reset(nextRouteName));
   };
 
   const handleOnDisagree = async () => {
     await consent({ isConsented: false });
     log(LogActions.termsDisagreed);
-    Alert.alert('Identification process failed. Close app and start again');
+    onClose();
   };
 
   const renderListItem = (text: string) => (
@@ -52,7 +59,7 @@ const ConsentScreen: FC<ConsentScreenProps> = (props) => {
   );
 
   return (
-    <ScreenContainer isLoading={isLoading} style={[theme.paddings.top.xxl, theme.paddings.bottom.l]}>
+    <ScreenContainer style={[theme.paddings.top.xxl, theme.paddings.bottom.l]}>
       <Container style={theme.paddings.bottom.l}>
         <PrimaryText fontSize="xl" fontWeight="bold" center>
           {t('consent.title')}
@@ -107,12 +114,18 @@ const ConsentScreen: FC<ConsentScreenProps> = (props) => {
       </ScrollView>
       <Container style={[row, spaceBetween, theme.paddings.top.l]}>
         <Button
+          style={[theme.margins.right.m, flexShrink]}
           disabled={isLoading}
           onPress={handleOnDisagree}
           variant="secondary"
           label={t('buttons.disagree')}
         />
-        <Button disabled={!isEndReached || isLoading} onPress={handleOnAgree} label={t('buttons.start')} />
+        <Button
+          style={flexShrink}
+          disabled={!isEndReached || isLoading}
+          onPress={handleOnAgree}
+          label={t('buttons.start')}
+        />
       </Container>
     </ScreenContainer>
   );

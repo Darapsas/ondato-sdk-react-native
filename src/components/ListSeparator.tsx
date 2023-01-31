@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
-import { Colors } from '@ondato/theme/types';
-import { useTheme } from '@ondato/theme/hooks';
+import { Colors } from '../theme/types';
+import { useTheme } from '../theme/hooks';
 
 export interface ListSeparatorProps {
   color?: keyof Colors;

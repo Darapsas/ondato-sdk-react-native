@@ -1,20 +1,14 @@
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Container,
-  DocumentsListItem,
-  FlowScreenContainer,
-  ListSeparator,
-  PrimaryText,
-} from '@ondato/components';
 import { FlatList, ListRenderItemInfo } from 'react-native';
-import { documentPrepareRoute, DocumentSelectScreenProps } from '@ondato/navigation/types';
-import { useAppSelector } from '@ondato/core/store';
-import { useTheme } from '@ondato/theme/hooks';
-import { selectDocuments } from '@ondato/modules/kyc/selectors';
-import { Document, DocumentVariant } from '@ondato/modules/kyc/types';
-import { useLogging } from '@ondato/hooks';
-import { LogActions } from '@ondato/api/clients/identity/constants';
+import { Container, DocumentsListItem, FlowScreenContainer, ListSeparator, PrimaryText } from '../components';
+import { documentPrepareRoute, DocumentSelectScreenProps } from '../navigation/types';
+import { useAppSelector } from '../core/store';
+import { useTheme } from '../theme/hooks';
+import { selectDocuments } from '../modules/kyc/selectors';
+import { Document, DocumentVariant } from '../modules/kyc/types';
+import { useLogging } from '../hooks';
+import { LogActions } from '../api/clients/identity/constants';
 
 const DocumentSelectScreen: FC<DocumentSelectScreenProps> = (props) => {
   const { navigation } = props;
@@ -31,7 +25,7 @@ const DocumentSelectScreen: FC<DocumentSelectScreenProps> = (props) => {
   const handleDocumentPress = (document: Document) => {
     const [sideId] = document.sidesIds;
     const variant: DocumentVariant = { id: document.id, sideId };
-    navigation.navigate(documentPrepareRoute, { variant });
+    navigation.push(documentPrepareRoute, { variant });
   };
 
   const renderItem = (item: ListRenderItemInfo<Document>) => {

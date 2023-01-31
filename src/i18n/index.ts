@@ -25,11 +25,10 @@ const languageDetector: LanguageDetectorAsyncModule = {
   type: 'languageDetector',
   async: true,
   init: () => {},
-  detect: async (callback) => {
+  detect: (callback) => {
     const deviceLocale =
       Platform.OS === 'ios'
-        ? NativeModules.SettingsManager.settings.AppleLocale ||
-          NativeModules.SettingsManager.settings.AppleLanguages[0]
+        ? NativeModules.SettingsManager.settings.AppleLocale || NativeModules.SettingsManager.settings.AppleLanguages[0]
         : NativeModules.I18nManager.localeIdentifier;
 
     const formattedDeviceLocale = deviceLocale.split('_')[0].toUpperCase();

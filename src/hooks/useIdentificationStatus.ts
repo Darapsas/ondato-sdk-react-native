@@ -1,7 +1,7 @@
-import { useAppSelector } from '@ondato/core/store';
-import { selectKycId } from '@ondato/modules/kyc/selectors';
-import { KycClient } from '@ondato/api/clients';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
+import { useAppSelector } from '../core/store';
+import { selectKycId } from '../modules/kyc/selectors';
+import { KycClient } from '../api/clients';
 
 export const getQueryKey = (kycId: string) => {
   return ['kyc-status', kycId];
@@ -9,7 +9,9 @@ export const getQueryKey = (kycId: string) => {
 
 const useIdentificationStatus = () => {
   const kycId = useAppSelector(selectKycId);
-  if (!kycId) throw new Error('KycIdentification id is not found');
+  if (!kycId) {
+    throw new Error('KycIdentification id is not found');
+  }
 
   const getStatusFn = () => KycClient.getStatus(kycId);
   const { isLoading, data: status } = useQuery(getQueryKey(kycId), getStatusFn);

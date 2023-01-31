@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { Text as RNText, TextProps, TextStyle } from 'react-native';
-import { Colors, Fonts, FontSizes } from '@ondato/theme/types';
-import { useTheme } from '@ondato/theme/hooks';
+import { Colors, Fonts, FontSizes } from '../theme/types';
+import { useTheme } from '../theme/hooks';
 
 export interface PrimaryTextProps extends TextProps {
   fontSize?: keyof FontSizes;

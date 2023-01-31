@@ -28,9 +28,6 @@ SDK supports iOS 12.0 and up, Android from 5.0.0 version and up.
 | onError                | -                    | func              |
 | onSuccess              | -                    | func              |
 | onClose                | -                    | func              |
-| SuccessScreen          | SuccessScreen.tsx    | FC                |
-| LoadingScreen          | LoadingScreen.tsx    | FC                |
-| OnboardingScreen       | OnboardingScreen.tsx | FC                |
 | isConsentEnabled       | true                 | boolean           |
 | isOnboardingEnabled    | true                 | boolean           |
 | isLoggingEnabled       | true                 | boolean           |
@@ -57,7 +54,7 @@ Ondato Android SDK already comes with out-of-the-box translations for the follow
 - Estonian (et) 🇪🇪
 - Russian (ru) 🇷🇺
 - Albanian (sq) 🇦🇱
-- System ⚙️ (if device language is not translated, everything will be in English) 
+- System ⚙️ (if device language is not translated, everything will be in English)
 
 
 #### 5. Theme Customization
@@ -81,41 +78,59 @@ In order to enhance the user experience on the transition between your applicati
 ### 4. Starting the flow
 
 ```typescript jsx
-import React, { FC } from 'react';
-import OndatoSDK, { ConfigurableTheme } from 'ondato-sdk-react-native';
+import React, { FC, useCallback } from 'react';
+import { Button, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import OndatoSdk from 'idv-sdk-reactnative';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const App: FC = () => {
-  const identityVerificationId = '<Your identitity verification id>';
-  
-  const theme: ConfigurableTheme = {
+  const [identityVerificationId, setIdentityVerificationId] = useState<string | null>(null);
+  const [isStarted, setIsStarted] = useState<boolean>(false);
+
+  const config = {
+    isConsentEnabled: true,
+    isLoggingEnabled: true,
+    isOnboardingEnabled: true,
+  };
+
+  const theme = {
     colors: {
-      text: '#FFFFFF',
-      background: '#000000',
-      primary: '#EEEEEE',
+      primary: '#0000FF',
+      background: '#FFFFFF',
+      text: '#2B2B2B',
     },
   };
-  
-  const onSuccess = () => {
-    // Handle identification process success case
-  };
 
-  const onError = () => {
-    // Handle identification process error case
-  };
+  // Important to use useCallback hook to avoid rerendering
+  const onSuccess = useCallback(() => {
+    setIdentityVerificationId(null);
+    setIsStarted(false);
+  }, []);
 
-  const onClose = () => {
-    // Handle identification process close case
-  };
+  // Important to use useCallback hook to avoid rerendering
+  const onError = useCallback(() => {
+    setIdentityVerificationId(null);
+    setIsStarted(false);
+  }, []);
 
-  return (
-    <OndatoSDK
-      onSuccess={onSuccess}
-      onError={onError}
-      onClose={onClose}
-      theme={theme} 
-      identityVerificationId={identityVerificationId} 
-    />
-  );
+  // Important to use useCallback hook to avoid rerendering
+  const onClose = useCallback(() => {
+    setIdentityVerificationId(null);
+    setIsStarted(false);
+  }, []);
+
+  if (identityVerificationId && isStarted) {
+    return (
+      <OndatoSdk
+        {...config}
+        theme={theme}
+        onSuccess={onSuccess}
+        onError={onError}
+        onClose={onClose}
+        identityVerificationId={identityVerificationId}
+      />
+    );
+  }
 };
 
 export default App;

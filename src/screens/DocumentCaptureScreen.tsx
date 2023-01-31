@@ -1,24 +1,24 @@
 import React, { FC, useMemo, useRef } from 'react';
-import { Button, Camera, Container, FlowScreenContainer, PrimaryText, Svg } from '@ondato/components';
+import { useIsFocused } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { PhotoFile, Camera as RNCamera } from 'react-native-vision-camera';
+import { TFunction } from 'i18next';
+import { Button, Camera, Container, FlowScreenContainer, PrimaryText, Svg } from '../components';
 import {
   DocumentCaptureScreenProps,
   documentPrepareRoute,
   documentPreviewRoute,
   loadingRoute,
-} from '@ondato/navigation/types';
-import { useIsFocused } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { flex1, row, spaceBetween } from '@ondato/theme/common';
-import { Theme } from '@ondato/theme/types';
-import { PhotoFile, Camera as RNCamera } from 'react-native-vision-camera';
-import { useThemeAwareObject } from '@ondato/theme/hooks';
-import { useAppSelector } from '@ondato/core/store';
-import { useTheme } from '@ondato/theme/hooks';
-import { selectDocuments, selectIsSelfieWithDocumentEnabled } from '@ondato/modules/kyc/selectors';
-import { BaseDocumentId, DocumentSideId, DocumentVariant } from '@ondato/modules/kyc/types';
-import { TFunction } from 'i18next';
-import { reset } from '@ondato/navigation/actions';
+} from '../navigation/types';
+import { flex1, row, spaceBetween } from '../theme/common';
+import { Theme } from '../theme/types';
+import { useThemeAwareObject } from '../theme/hooks';
+import { useAppSelector } from '../core/store';
+import { useTheme } from '../theme/hooks';
+import { selectDocuments, selectIsSelfieWithDocumentEnabled } from '../modules/kyc/selectors';
+import { BaseDocumentId, DocumentSideId, DocumentVariant } from '../modules/kyc/types';
+import { reset } from '../navigation/actions';
 import { IconName } from '../components/Svg';
 
 const DocumentCaptureScreen: FC<DocumentCaptureScreenProps> = (props) => {
@@ -33,14 +33,13 @@ const DocumentCaptureScreen: FC<DocumentCaptureScreenProps> = (props) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const themedStyles = useThemeAwareObject(styles);
-
   const cameraRef = useRef<RNCamera>(null);
 
   const { title, iconName, cropDimensions } = useMemo(
     () => ({
       title: pageTitle(t)[variant.id][variant.sideId],
       iconName: pageIconName[variant.id][variant.sideId],
-      cropDimensions: variant.id === 'SelfieWithDoc' ? { x: 1, y: 1 } : undefined,
+      cropDimensions: variant.id === 'SelfieWithDoc' ? { x: 5, y: 4 } : undefined,
     }),
     [variant, t]
   );
@@ -55,7 +54,7 @@ const DocumentCaptureScreen: FC<DocumentCaptureScreenProps> = (props) => {
 
     if (isSelfieWithDocumentEnabled && variant.id === 'Selfie') {
       const selfieWithDocumentVariant: DocumentVariant = { id: 'SelfieWithDoc', sideId: 'Front' };
-      navigation.push(documentPrepareRoute, { variant: selfieWithDocumentVariant });
+      navigation.dispatch(reset(documentPrepareRoute, { variant: selfieWithDocumentVariant }));
       return;
     }
 
@@ -63,7 +62,9 @@ const DocumentCaptureScreen: FC<DocumentCaptureScreenProps> = (props) => {
   };
 
   const handleCapture = async () => {
-    if (!cameraRef.current) return;
+    if (!cameraRef.current) {
+      return;
+    }
     const photo = await cameraRef.current.takePhoto();
     handleNavigation(photo);
   };
@@ -88,7 +89,7 @@ const DocumentCaptureScreen: FC<DocumentCaptureScreenProps> = (props) => {
         )}
         <Container style={[spaceBetween, row, themedStyles.footer]}>
           <TouchableOpacity onPress={navigation.goBack}>
-            <Svg color={theme.colors.white} name="help" width={32} height={32} />
+            <Svg color="white" name="help" width={32} height={32} />
           </TouchableOpacity>
           <Button onPress={handleCapture} label={t('buttons.capture')} />
           <View style={themedStyles.iconPlaceholder} />
@@ -102,6 +103,7 @@ const styles = (theme: Theme) => {
   return StyleSheet.create({
     cameraContainer: {
       position: 'relative',
+      backgroundColor: theme.colors.black,
     },
     iconPlaceholder: {
       width: 32,
@@ -115,7 +117,7 @@ const styles = (theme: Theme) => {
   });
 };
 
-const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, string | undefined>> => ({
+const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, string | null>> => ({
   IdCard: {
     Front: t('document_capture.id_card.front.title'),
     Back: t('document_capture.id_card.back.title'),
@@ -126,15 +128,15 @@ const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, 
   },
   Passport: {
     Front: t('document_capture.passport.title'),
-    Back: undefined,
+    Back: null,
   },
   Selfie: {
     Front: t('document_capture.selfie.title'),
-    Back: undefined,
+    Back: null,
   },
   SelfieWithDoc: {
     Front: t('document_capture.document_with_selfie.title'),
-    Back: undefined,
+    Back: null,
   },
 });
 

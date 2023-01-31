@@ -1,15 +1,17 @@
-import { useAppSelector } from '@ondato/core/store';
-import { selectIdentityVerificationId } from '@ondato/modules/kyc/selectors';
-import { IdentityClient } from '@ondato/api/clients';
-import { LogActions } from '@ondato/api/clients/identity/constants';
 import { useCallback } from 'react';
+import { useAppSelector } from '../core/store';
+import { selectIdentityVerificationId } from '../modules/kyc/selectors';
+import { IdentityClient } from '../api/clients';
+import { LogActions } from '../api/clients/identity/constants';
 
 const useLogging = () => {
   const identityVerificationId = useAppSelector(selectIdentityVerificationId);
 
   const log = useCallback(
     (action: LogActions) => {
-      if (!identityVerificationId) throw new Error('Identity verification id is not found');
+      if (!identityVerificationId) {
+        return;
+      }
       IdentityClient.log(identityVerificationId, { action });
     },
     [identityVerificationId]

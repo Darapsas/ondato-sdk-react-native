@@ -1,13 +1,15 @@
+import { BackendConfig, Document, DocumentId, DocumentSideId } from './types';
 import {
   Document as ApiDocument,
   DocumentName as ApiDocumentName,
   DocumentSideName as ApiDocumentSideName,
   KycConfig as ApiKycConfig,
-} from '@ondato/api/clients/kyc/types';
-import { BackendConfig, Document, DocumentId, DocumentSideId } from './types';
+} from '../../api/clients/kyc/types';
 
 const isSelfieWithDocumentEnabled = (apiKycConfig: ApiKycConfig) => {
-  if (!apiKycConfig.additionalDocument || !apiKycConfig.additionalDocument.enabled) return false;
+  if (!apiKycConfig.additionalDocument || !apiKycConfig.additionalDocument.enabled) {
+    return false;
+  }
   return !!apiKycConfig.additionalDocument.types.find((type) => type.name === 'SelfieWithDoc');
 };
 
@@ -21,7 +23,7 @@ const documentSideIdMap: Record<ApiDocumentSideName, DocumentSideId> = {
   Front: 'Front',
   FrontCover: 'Front',
   Back: 'Back',
-  DataPage: 'Front', // TODO: no design for that
+  DataPage: 'Front',
 };
 
 const mapDocument = (document: ApiDocument): Document => ({
@@ -37,9 +39,3 @@ export const mapBackendConfig = (apiKycConfig: ApiKycConfig): BackendConfig => (
   isResultsWaitingEnabled: apiKycConfig.resultsWaiting?.enabled ?? false,
   isSelfieWithDocumentEnabled: isSelfieWithDocumentEnabled(apiKycConfig),
 });
-
-export const apiDocumentNameMap: Record<DocumentId, ApiDocumentName> = {
-  IdCard: 'IdCard',
-  Passport: 'Passport',
-  DriverLicense: 'DriverLicense',
-};

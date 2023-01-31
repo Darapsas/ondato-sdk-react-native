@@ -1,53 +1,24 @@
 {
-  "env": {
-    "browser": true,
-    "react-native/react-native": true
-  },
-  "extends": [
-      "eslint:recommended",
-      "@react-native-community",
-      "plugin:react/recommended",
-      "plugin:prettier/recommended"
-  ],
-  "plugins": [
-      "react",
-      "react-native",
-      "prettier",
-      "eslint-plugin-import"
-  ],
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2019,
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
-  "rules": {
-    "sort-imports": [
-        "error",
-      {
-        "ignoreCase": true,
-        "ignoreDeclarationSort": true,
-        "allowSeparatedGroups": true
-      }
-    ],
-    "import/order": [
-        "error",
-      {
-        "groups": [
-            "external",
-            "builtin",
-            "internal",
-            "sibling",
-            "parent",
-            "index"
+  "root": true,
+  "extends": "@react-native-community",
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-shadow": ["error"],
+        "no-shadow": "off",
+        "no-undef": "off",
+        "sort-imports": [
+          "error",
+          {
+            "ignoreCase": true,
+            "ignoreDeclarationSort": true,
+            "allowSeparatedGroups": true
+          }
         ]
       }
-    ]
-  }
+    }
+  ]
 }

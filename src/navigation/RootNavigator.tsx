@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
+import { PhotoFile } from 'react-native-vision-camera';
 import {
   consentRoute,
   documentCaptureRoute,
@@ -17,7 +18,7 @@ import {
   resultsWaitingRoute,
   selfieCaptureRoute,
   successRoute,
-} from '@ondato/navigation/types';
+} from './types';
 import {
   ConsentScreen,
   DocumentCaptureScreen,
@@ -25,7 +26,6 @@ import {
   DocumentPreviewScreen,
   DocumentSelectScreen,
   ErrorScreen,
-  InitialScreen,
   LanguagesScreen,
   LoadingScreen,
   OnboardingScreen,
@@ -34,10 +34,10 @@ import {
   ResultsWaitingScreen,
   SelfieCaptureScreen,
   SuccessScreen,
-} from '@ondato/screens';
-import { PhotoFile } from 'react-native-vision-camera';
-import { DocumentVariant } from '@ondato/modules/kyc/types';
-import { RejectionReasons } from '@ondato/api/clients/kyc/constants';
+} from '../screens';
+import { DocumentVariant } from '../modules/kyc/types';
+import { RejectionReasons } from '../api/clients/kyc/constants';
+import ConfigContext from '../core/config/provider/ConfigContext';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -64,15 +64,16 @@ export type RootStackParamList = {
 };
 
 const RootNavigator: FC = () => {
+  const { initialRouteName, params } = useContext(ConfigContext);
+
   return (
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName={initialRoute} screenOptions={screenOptions}>
+      <RootStack.Navigator initialRouteName={initialRouteName} screenOptions={screenOptions}>
         <RootStack.Group>
-          <RootStack.Screen name={initialRoute} component={InitialScreen} />
           <RootStack.Screen name={onboardingRoute} component={OnboardingScreen} />
           <RootStack.Screen name={consentRoute} component={ConsentScreen} />
           <RootStack.Screen name={documentSelectRoute} component={DocumentSelectScreen} />
-          <RootStack.Screen name={documentPrepareRoute} component={DocumentPrepareScreen} />
+          <RootStack.Screen initialParams={params} name={documentPrepareRoute} component={DocumentPrepareScreen} />
           <RootStack.Screen name={documentCaptureRoute} component={DocumentCaptureScreen} />
           <RootStack.Screen name={selfieCaptureRoute} component={SelfieCaptureScreen} />
           <RootStack.Screen name={documentPreviewRoute} component={DocumentPreviewScreen} />

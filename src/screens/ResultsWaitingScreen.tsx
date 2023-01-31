@@ -1,30 +1,44 @@
-import React, { FC, useCallback, useEffect } from 'react';
-import { Container, LottieAnimation, PrimaryText, ScreenContainer } from '@ondato/components';
-import { center, flex1, rowEnd } from '@ondato/theme/common';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { errorRoute, ResultsWaitingScreenProps, successRoute } from '@ondato/navigation/types';
-import { useTheme } from '@ondato/theme/hooks';
-import { useLogging, useResultsWaiting } from '@ondato/hooks';
-import { LogActions } from '@ondato/api/clients/identity/constants';
-import { RejectionReasons } from '@ondato/api/clients/kyc/constants';
-import { reset } from '@ondato/navigation/actions';
-const encryptionAnimation = require('@ondato/assets/animations/encryption.json');
+import { Container, LottieAnimation, PrimaryText, ScreenContainer } from '../components';
+import { center, flex1, rowEnd } from '../theme/common';
+import { errorRoute, ResultsWaitingScreenProps, successRoute } from '../navigation/types';
+import { useTheme } from '../theme/hooks';
+import { useLogging, useResultsWaiting } from '../hooks';
+import { LogActions } from '../api/clients/identity/constants';
+import { RejectionReasons } from '../api/clients/kyc/constants';
+import { reset } from '../navigation/actions';
+const encryptionAnimation = require('../../assets/animations/encryption.json');
 
 const ResultsWaitingScreen: FC<ResultsWaitingScreenProps> = (props) => {
   const { navigation } = props;
 
+  const [percentsCount, setPercentsCount] = useState<number>(0);
   const { log } = useLogging();
   const theme = useTheme();
 
+  const increasePercentsCount = useCallback(() => {
+    if (percentsCount < 99) {
+      setPercentsCount((prevState) => prevState + 1);
+    }
+  }, [percentsCount]);
+
+  useEffect(() => {
+    const timer = setInterval(increasePercentsCount, 1000);
+    return () => clearInterval(timer);
+  }, [increasePercentsCount]);
+
   const handleOnError = useCallback(
     (rejectionReason: RejectionReasons) => {
-      navigation.dispatch(reset(errorRoute, { rejectionReason }));
+      setPercentsCount(100);
+      setTimeout(() => navigation.dispatch(reset(errorRoute, { rejectionReason })));
     },
     [navigation]
   );
 
   const handleOnSuccess = useCallback(() => {
-    navigation.dispatch(reset(successRoute));
+    setPercentsCount(100);
+    setTimeout(() => navigation.dispatch(reset(successRoute)));
   }, [navigation]);
 
   useResultsWaiting({ onError: handleOnError, onSuccess: handleOnSuccess });
@@ -38,7 +52,7 @@ const ResultsWaitingScreen: FC<ResultsWaitingScreenProps> = (props) => {
       <Container style={[flex1, center]}>
         <View style={[rowEnd, theme.margins.bottom.m]}>
           <PrimaryText fontWeight="bold" fontSize="xxxl">
-            2
+            {percentsCount}
           </PrimaryText>
           <PrimaryText style={styles.percents} fontWeight="bold" fontSize="xxl">
             %

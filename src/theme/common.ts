@@ -8,6 +8,10 @@ export const flexGrow: ViewStyle = {
   flexGrow: 1,
 };
 
+export const flexShrink: ViewStyle = {
+  flexShrink: 1,
+};
+
 export const row: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',

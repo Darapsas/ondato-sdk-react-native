@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from '@ondato/theme/hooks';
 import Container from './Container';
 import PrimaryText from './PrimaryText';
+import { useTheme } from '../theme/hooks';
 
 export interface ScreenHeaderProps {
   title: string;
-  description?: string;
+  description?: string | null;
   style?: StyleProp<ViewStyle>;
 }
 

@@ -1,4 +1,5 @@
-import { LogActions } from '@ondato/api/clients/identity/constants';
+import { LogActions } from './constants';
+import { BaseConfigProperty } from '../../types';
 
 export interface SetupStep {
   type: string;
@@ -8,6 +9,7 @@ export interface SetupStep {
 
 export interface GetSetupResponse {
   steps: SetupStep[];
+  sessionScreenRecording: BaseConfigProperty;
 }
 
 export interface OsVersion {

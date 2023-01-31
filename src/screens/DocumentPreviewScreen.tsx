@@ -1,27 +1,16 @@
 import React, { FC, useMemo } from 'react';
-import { documentPrepareRoute, DocumentPreviewScreenProps, loadingRoute } from '@ondato/navigation/types';
-import {
-  Button,
-  Container,
-  DimensionContainer,
-  FlowScreenContainer,
-  PrimaryText,
-  Svg,
-} from '@ondato/components';
 import { useTranslation } from 'react-i18next';
-import { center, flex1, row, spaceBetween } from '@ondato/theme/common';
 import { ImageBackground, StyleSheet, View } from 'react-native';
-import { useUploadAdditionalDocument, useUploadDocument } from '@ondato/hooks';
-import { DeviceUtils, FileUtils } from '@ondato/utils';
-import { useTheme } from '@ondato/theme/hooks';
-import { BaseDocumentId, DocumentSideId, DocumentVariant } from '@ondato/modules/kyc/types';
-import { useAppSelector } from '@ondato/core/store';
-import {
-  selectDocuments,
-  selectIsSelfieEnabled,
-  selectIsSelfieWithDocumentEnabled,
-} from '@ondato/modules/kyc/selectors';
-import { reset } from '@ondato/navigation/actions';
+import { documentPrepareRoute, DocumentPreviewScreenProps, loadingRoute } from '../navigation/types';
+import { Button, Container, DimensionContainer, FlowScreenContainer, PrimaryText, Svg } from '../components';
+import { center, flex1, flexShrink, row, spaceBetween } from '../theme/common';
+import { useUploadAdditionalDocument, useUploadDocument } from '../hooks';
+import { DeviceUtils, FileUtils } from '../utils';
+import { useTheme } from '../theme/hooks';
+import { BaseDocumentId, DocumentSideId, DocumentVariant } from '../modules/kyc/types';
+import { useAppSelector } from '../core/store';
+import { selectDocuments, selectIsSelfieEnabled, selectIsSelfieWithDocumentEnabled } from '../modules/kyc/selectors';
+import { reset } from '../navigation/actions';
 import { IconName } from '../components/Svg';
 
 const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
@@ -35,8 +24,8 @@ const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
 
   const theme = useTheme();
   const { t } = useTranslation();
-  const { uploadDocument, isLoading: isDocumentUploading } = useUploadDocument();
-  const { uploadAdditionalDocument, isLoading: isAdditionalUploading } = useUploadAdditionalDocument();
+  const { uploadDocument } = useUploadDocument();
+  const { uploadAdditionalDocument } = useUploadAdditionalDocument();
   const currentDocument = useMemo(
     () => documents.find((document) => document.id === variant.id),
     [documents, variant.id]
@@ -59,20 +48,20 @@ const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
 
       if (hasNext) {
         const nextSideVariant: DocumentVariant = { id: variant.id, sideId: sidesIds[sideIdIndex + 1] };
-        navigation.push(documentPrepareRoute, { variant: nextSideVariant });
+        navigation.dispatch(reset(documentPrepareRoute, { variant: nextSideVariant }));
         return;
       }
     }
 
     if (isSelfieEnabled && variant.id !== 'Selfie' && variant.id !== 'SelfieWithDoc') {
       const selfieVariant: DocumentVariant = { id: 'Selfie', sideId: 'Front' };
-      navigation.push(documentPrepareRoute, { variant: selfieVariant });
+      navigation.dispatch(reset(documentPrepareRoute, { variant: selfieVariant }));
       return;
     }
 
     if (isSelfieWithDocumentEnabled && variant.id !== 'SelfieWithDoc') {
       const selfieWithDocumentVariant: DocumentVariant = { id: 'SelfieWithDoc', sideId: 'Front' };
-      navigation.push(documentPrepareRoute, { variant: selfieWithDocumentVariant });
+      navigation.dispatch(reset(documentPrepareRoute, { variant: selfieWithDocumentVariant }));
       return;
     }
 
@@ -80,13 +69,13 @@ const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
   };
 
   const onUpload = async () => {
-    const base64Image = await FileUtils.getBase64Image(photo.path);
+    const base64Image = await FileUtils.getBase64File(photo.path);
     const fileType = FileUtils.getImageFileType();
 
     if (currentDocument) {
       await uploadDocument({
-        documentSide: variant.sideId,
-        documentType: currentDocument.id,
+        part: variant.sideId,
+        type: currentDocument.id,
         imageFileType: fileType,
         imageBase64: base64Image,
       });
@@ -102,10 +91,7 @@ const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
   };
 
   return (
-    <FlowScreenContainer
-      isLoading={isDocumentUploading || isAdditionalUploading}
-      style={theme.paddings.bottom.l}
-    >
+    <FlowScreenContainer style={theme.paddings.bottom.l}>
       <Container style={flex1}>
         <PrimaryText style={theme.paddings.bottom.m} fontSize="xl" fontWeight="bold" center>
           {t('document_preview.title')}
@@ -122,13 +108,18 @@ const DocumentPreviewScreen: FC<DocumentPreviewScreenProps> = (props) => {
         </DimensionContainer>
         {!!iconName && (
           <View style={[center, theme.margins.top.l]}>
-            <Svg color={theme.colors.text} name={iconName} width={109} />
+            <Svg color="text" name={iconName} width={109} />
           </View>
         )}
       </Container>
       <Container style={[row, spaceBetween, theme.paddings.top.l]}>
-        <Button onPress={navigation.goBack} variant="secondary" label={t('buttons.try_again')} />
-        <Button onPress={onUpload} label={t('buttons.continue')} />
+        <Button
+          style={[theme.margins.right.m, flexShrink]}
+          onPress={navigation.goBack}
+          variant="secondary"
+          label={t('buttons.try_again')}
+        />
+        <Button style={flexShrink} onPress={onUpload} label={t('buttons.continue')} />
       </Container>
     </FlowScreenContainer>
   );

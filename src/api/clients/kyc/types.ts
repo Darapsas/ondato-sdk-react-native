@@ -1,4 +1,5 @@
-import { RejectionReasons } from '@ondato/api/clients/kyc/constants';
+import { RejectionReasons } from './constants';
+import { BaseConfigProperty } from '../../types';
 
 export type PassportSideName = 'FrontCover' | 'DataPage';
 export type IdCardSideName = 'Front' | 'Back';
@@ -22,8 +23,8 @@ export interface GetKycIdResponse {
 }
 
 export interface UploadDocumentRequest {
-  documentType: DocumentName;
-  documentSide: DocumentSideName;
+  type: DocumentName;
+  part: DocumentSideName;
   imageBase64: string;
   imageFileType: DocumentImageFileType;
 }
@@ -53,10 +54,6 @@ export interface KycStatus {
   status: IdentificationStatus;
   identityVerificationId: string;
   statusReason: RejectionReasons;
-}
-
-interface BaseConfigProperty {
-  enabled: boolean;
 }
 
 interface DocumentSide {
@@ -124,4 +121,16 @@ export interface KycConfig {
   face: FaceConfigProperty;
   resultsWaiting?: ResultsWaitingProperty;
   additionalDocument?: AdditionalDocumentProperty;
+}
+
+export interface FaceTecEnroll3dRequest {
+  sessionId: string;
+  faceScanBase64: string;
+  auditImagesBase64: string[];
+  lowQualityAuditImagesBase64: string[];
+  sessionUserAgent: string;
+}
+
+export interface FaceTecEnroll2dRequest {
+  auditImagesBase64: string[];
 }

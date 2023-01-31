@@ -1,27 +1,17 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import {
-  documentCaptureRoute,
-  DocumentPrepareScreenProps,
-  selfieCaptureRoute,
-} from '@ondato/navigation/types';
-import {
-  Button,
-  Container,
-  FlowScreenContainer,
-  MistakesListItem,
-  PrimaryText,
-  Svg,
-} from '@ondato/components';
-import { center, row, rowStart, spaceBetween } from '@ondato/theme/common';
 import { ScrollView, View } from 'react-native';
-import { Mistake } from '@ondato/api/types';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@ondato/theme/hooks';
-import { BaseDocumentId, DocumentSideId } from '@ondato/modules/kyc/types';
-import { useLogging } from '@ondato/hooks';
-import { LogActions } from '@ondato/api/clients/identity/constants';
 import { TFunction } from 'i18next';
+import { documentCaptureRoute, DocumentPrepareScreenProps, selfieCaptureRoute } from '../navigation/types';
+import { Button, Container, FlowScreenContainer, MistakesListItem, PrimaryText, Svg } from '../components';
+import { center, flexShrink, row, rowStart, spaceBetween } from '../theme/common';
+import { Mistake } from '../api/types';
+import { useTheme } from '../theme/hooks';
+import { BaseDocumentId, DocumentSideId } from '../modules/kyc/types';
+import { useLogging } from '../hooks';
+import { LogActions } from '../api/clients/identity/constants';
 import { IconName } from '../components/Svg';
+import { reset } from '../navigation/actions';
 
 const DocumentPrepareScreen: FC<DocumentPrepareScreenProps> = (props) => {
   const { navigation, route } = props;
@@ -31,30 +21,51 @@ const DocumentPrepareScreen: FC<DocumentPrepareScreenProps> = (props) => {
   const { log } = useLogging();
   const theme = useTheme();
   const { t } = useTranslation();
+  const canGoBack = navigation.canGoBack();
 
-  const { title, description, iconName, mistakes } = useMemo(
+  const { title, description, iconName, mistakes, iconSize } = useMemo(
     () => ({
       title: pageTitle(t)[variant.id][variant.sideId],
       description: pageDescription(t)[variant.id][variant.sideId],
       iconName: pageIconName[variant.id][variant.sideId],
+      iconSize: pageIconSize[variant.id],
       mistakes: pageMistakes(t)[variant.id],
     }),
     [variant, t]
   );
 
   useEffect(() => {
-    if (variant.id === 'SelfieWithDoc') log(LogActions.selfieWithDocumentPage);
-    if (variant.id === 'IdCard' && variant.sideId === 'Front') log(LogActions.idCardFrontPage);
-    if (variant.id === 'IdCard' && variant.sideId === 'Back') log(LogActions.idCardBackPage);
-    if (variant.id === 'Passport' && variant.sideId === 'Front') log(LogActions.passportFrontPage);
-    if (variant.id === 'Passport' && variant.sideId === 'Back') log(LogActions.passportBackPage);
-    if (variant.id === 'DriverLicense' && variant.sideId === 'Front') log(LogActions.driverLicenseFrontPage);
-    if (variant.id === 'Passport' && variant.sideId === 'Back') log(LogActions.driverLicenseBackPage);
+    if (variant.id === 'SelfieWithDoc') {
+      log(LogActions.selfieWithDocumentPage);
+    }
+    if (variant.id === 'IdCard' && variant.sideId === 'Front') {
+      log(LogActions.idCardFrontPage);
+    }
+    if (variant.id === 'IdCard' && variant.sideId === 'Back') {
+      log(LogActions.idCardBackPage);
+    }
+    if (variant.id === 'Passport' && variant.sideId === 'Front') {
+      log(LogActions.passportFrontPage);
+    }
+    if (variant.id === 'Passport' && variant.sideId === 'Back') {
+      log(LogActions.passportBackPage);
+    }
+    if (variant.id === 'DriverLicense' && variant.sideId === 'Front') {
+      log(LogActions.driverLicenseFrontPage);
+    }
+    if (variant.id === 'Passport' && variant.sideId === 'Back') {
+      log(LogActions.driverLicenseBackPage);
+    }
   }, [log, variant]);
 
   const handleOnStart = () => {
     if (variant.id === 'Selfie') {
-      navigation.push(selfieCaptureRoute);
+      navigation.dispatch(reset(selfieCaptureRoute));
+      return;
+    }
+
+    if (variant.id === 'SelfieWithDoc') {
+      navigation.push(documentCaptureRoute, { variant });
       return;
     }
 
@@ -74,7 +85,7 @@ const DocumentPrepareScreen: FC<DocumentPrepareScreenProps> = (props) => {
         </PrimaryText>
         {!!iconName && (
           <View style={center}>
-            <Svg color={theme.colors.primary} name={iconName} />
+            <Svg {...iconSize} color="primary" name={iconName} />
           </View>
         )}
         {mistakes.length > 0 && (
@@ -84,21 +95,28 @@ const DocumentPrepareScreen: FC<DocumentPrepareScreenProps> = (props) => {
             </PrimaryText>
             <View style={[rowStart, spaceBetween]}>
               {mistakes.map((mistake, index) => (
-                <MistakesListItem mistake={mistake} key={index} />
+                <MistakesListItem iconHeight={variant.id === 'Selfie' ? 92 : undefined} mistake={mistake} key={index} />
               ))}
             </View>
           </View>
         )}
       </ScrollView>
-      <Container style={[row, spaceBetween, theme.paddings.top.l]}>
-        <Button onPress={navigation.goBack} variant="secondary" label={t('buttons.go_back')} />
-        <Button onPress={handleOnStart} label={t('buttons.start')} />
+      <Container style={[row, canGoBack ? spaceBetween : center, theme.paddings.top.l]}>
+        {canGoBack && (
+          <Button
+            style={[theme.margins.right.m, flexShrink]}
+            onPress={navigation.goBack}
+            variant="secondary"
+            label={t('buttons.go_back')}
+          />
+        )}
+        <Button style={flexShrink} onPress={handleOnStart} label={t('buttons.start')} />
       </Container>
     </FlowScreenContainer>
   );
 };
 
-const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, string | undefined>> => ({
+const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, string | null>> => ({
   IdCard: {
     Front: t('document_preparation.id_card.front.title'),
     Back: t('document_preparation.id_card.back.title'),
@@ -109,21 +127,19 @@ const pageTitle = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, 
   },
   Passport: {
     Front: t('document_preparation.passport.title'),
-    Back: undefined,
+    Back: null,
   },
   Selfie: {
     Front: t('document_preparation.selfie.title'),
-    Back: undefined,
+    Back: null,
   },
   SelfieWithDoc: {
     Front: t('document_preparation.document_with_selfie.title'),
-    Back: undefined,
+    Back: null,
   },
 });
 
-const pageDescription = (
-  t: TFunction
-): Record<BaseDocumentId, Record<DocumentSideId, string | undefined>> => ({
+const pageDescription = (t: TFunction): Record<BaseDocumentId, Record<DocumentSideId, string | null>> => ({
   IdCard: {
     Front: t('document_preparation.id_card.front.description'),
     Back: t('document_preparation.id_card.back.description'),
@@ -134,15 +150,15 @@ const pageDescription = (
   },
   Passport: {
     Front: t('document_preparation.passport.description'),
-    Back: undefined,
+    Back: null,
   },
   Selfie: {
     Front: t('document_preparation.selfie.description'),
-    Back: undefined,
+    Back: null,
   },
   SelfieWithDoc: {
     Front: t('document_preparation.document_with_selfie.description'),
-    Back: undefined,
+    Back: null,
   },
 });
 
@@ -167,6 +183,14 @@ const pageIconName: Record<BaseDocumentId, Record<DocumentSideId, IconName | und
     Front: 'documentWithSelfieFront',
     Back: undefined,
   },
+};
+
+const pageIconSize: Record<BaseDocumentId, { width: number; height: number } | undefined> = {
+  IdCard: { width: 258, height: 203 },
+  DriverLicense: { width: 258, height: 203 },
+  Passport: { width: 167, height: 212 },
+  Selfie: { width: 220, height: 227 },
+  SelfieWithDoc: { width: 231, height: 238 },
 };
 
 const pageMistakes = (t: TFunction): Record<BaseDocumentId, Mistake[]> => ({

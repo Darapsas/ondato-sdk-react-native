@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
-import { KycClient } from '@ondato/api/clients';
-import { useAppSelector } from '@ondato/core/store';
-import { selectKycId } from '@ondato/modules/kyc/selectors';
-import { RejectionReasons } from '@ondato/api/clients/kyc/constants';
+import { KycClient } from '../api/clients';
+import { useAppSelector } from '../core/store';
+import { selectKycId } from '../modules/kyc/selectors';
+import { RejectionReasons } from '../api/clients/kyc/constants';
 
 interface Props {
   onSuccess: () => void;
@@ -14,7 +14,9 @@ const useResultsWaiting = (props: Props) => {
   const kycId = useAppSelector(selectKycId);
 
   const checkStatus = useCallback(async () => {
-    if (!kycId) throw new Error('KycIdentification id is not found');
+    if (!kycId) {
+      throw new Error('KycIdentification id is not found');
+    }
     return await KycClient.getStatus(kycId);
   }, [kycId]);
 

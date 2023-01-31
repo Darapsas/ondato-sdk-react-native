@@ -1,22 +1,30 @@
 import React, { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { center } from '@ondato/theme/common';
-import { Mistake } from '@ondato/api/types';
-import { useTheme } from '@ondato/theme/hooks';
 import PrimaryText from './PrimaryText';
 import Svg from './Svg';
+import { center } from '../theme/common';
+import { Mistake } from '../api/types';
+import { useTheme } from '../theme/hooks';
 
 export interface MistakesListItemProps {
   mistake: Mistake;
+  iconWidth?: number;
+  iconHeight?: number;
 }
 
 const MistakesListItem: FC<MistakesListItemProps> = (props) => {
-  const { mistake } = props;
+  const { mistake, iconHeight = 66, iconWidth = 92 } = props;
   const theme = useTheme();
 
   return (
     <View style={center}>
-      <Svg color={theme.colors.primary} style={theme.margins.bottom.s} name={mistake.iconName} />
+      <Svg
+        width={iconWidth}
+        height={iconHeight}
+        color="primary"
+        style={theme.margins.bottom.s}
+        name={mistake.iconName}
+      />
       <Svg name="danger" style={theme.margins.bottom.xs} width={19} height={19} />
       <PrimaryText style={styles.label} center fontSize="xs">
         {mistake.label}

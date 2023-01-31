@@ -1,16 +1,17 @@
-import { useAppSelector } from '@ondato/core/store';
-import { selectKycId } from '@ondato/modules/kyc/selectors';
-import { KycClient } from '@ondato/api/clients';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
+import { useAppSelector } from '../core/store';
+import { selectIdentityVerificationId } from '../modules/kyc/selectors';
+import { IdentityClient } from '../api/clients';
 
 const useCompleteIdentification = () => {
-  const kycId = useAppSelector(selectKycId);
+  const identityVerificationId = useAppSelector(selectIdentityVerificationId);
 
   const mutationFn = async () => {
-    if (!kycId) throw new Error('KycIdentification id is not found');
-    await KycClient.verify(kycId);
-    await KycClient.complete(kycId);
-    return await KycClient.getStatus(kycId);
+    if (!identityVerificationId) {
+      throw new Error('Identity verification id is not found');
+    }
+
+    await IdentityClient.complete(identityVerificationId);
   };
 
   const { mutateAsync, isLoading } = useMutation(mutationFn);

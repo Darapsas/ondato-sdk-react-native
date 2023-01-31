@@ -1,44 +1,26 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "lib": ["esnext"],
-    "allowJs": true,
-    "jsx": "react-native",
-    "noEmit": false,
-    "isolatedModules": true,
-    "strict": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "noStrictGenericChecks": false,
-    "noImplicitReturns": true,
-    "noImplicitUseStrict": false,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
-      "ondato-sdk-react-native": ["./src/index"],
-      "@ondato/assets/*": ["../assets/*"],
-      "@ondato/api/*": ["src/api/*"],
-      "@ondato/components": ["src/components"],
-      "@ondato/config": ["src/config"],
-      "@ondato/core/*": ["src/core/*"],
-      "@ondato/hooks": ["src/hooks"],
-      "@ondato/i18n/*": ["src/i18n/*"],
-      "@ondato/modules/*": ["src/modules/*"],
-      "@ondato/navigation/*": ["src/navigation/*"],
-      "@ondato/screens": ["src/screens"],
-      "@ondato/theme/*": ["src/theme/*"],
-      "@ondato/utils": ["src/utils"]
-    }
-  },
-  "exclude": [
-    "node_modules", "babel.config.js", "metro.config.js"
-  ]
+      "idv-sdk-reactnative": ["./src/index"]
+    },
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext"
+  }
 }

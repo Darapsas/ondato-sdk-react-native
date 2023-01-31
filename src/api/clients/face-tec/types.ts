@@ -5,3 +5,7 @@ export interface GetFaceTecLicenseResponse {
   key: string;
   appId: string;
 }
+
+export interface GetFaceTecSessionTokenResponse {
+  sessionToken: string;
+}

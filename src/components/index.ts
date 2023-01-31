@@ -14,4 +14,3 @@ export { default as DimensionContainer } from './DimensionContainer';
 export { default as LottieAnimation } from './LottieAnimation';
 export { default as Svg } from './Svg';
 export { default as Splash } from './Splash';
-export { default as ToastMessage } from './ToastMessage';

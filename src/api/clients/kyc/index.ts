@@ -1,5 +1,6 @@
-import httpClient from '@ondato/api/httpClient';
 import {
+  FaceTecEnroll2dRequest,
+  FaceTecEnroll3dRequest,
   GetKycIdRequest,
   GetKycIdResponse,
   KycConfig,
@@ -8,6 +9,7 @@ import {
   UploadDocumentRequest,
   UploadScreenRecordingRequest,
 } from './types';
+import httpClient from '../../httpClient';
 
 const baseUrl = '/kyc-identifications';
 
@@ -45,4 +47,12 @@ export const uploadScreenRecording = (id: string, request: UploadScreenRecording
 
 export const uploadAdditionalDocument = (id: string, request: UploadAdditionalDocumentRequest) => {
   return httpClient.put<UploadAdditionalDocumentRequest>(`${baseUrl}/${id}/additional-document`, request);
+};
+
+export const enrollFaceTec3d = (id: string, request: FaceTecEnroll3dRequest) => {
+  return httpClient.put<FaceTecEnroll3dRequest>(`${baseUrl}/${id}/face-tec-enrollment-3d`, request);
+};
+
+export const enrollFaceTec2d = (id: string, request: FaceTecEnroll2dRequest) => {
+  return httpClient.put<FaceTecEnroll2dRequest>(`${baseUrl}/${id}/face-tec-liveness-2d`, request);
 };

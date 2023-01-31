@@ -1,17 +1,16 @@
 import React, { FC } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@ondato/navigation/RootNavigator';
-import { row } from '@ondato/theme/common';
 import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
-import { quitConfirmationRoute } from '@ondato/navigation/types';
-import { useTheme } from '@ondato/theme/hooks';
 import ScreenContainer from './ScreenContainer';
 import Container from './Container';
 import Svg from './Svg';
+import { RootStackParamList } from '../navigation/RootNavigator';
+import { row } from '../theme/common';
+import { quitConfirmationRoute } from '../navigation/types';
+import { useTheme } from '../theme/hooks';
 
 export interface FlowScreenContainerProps {
   children: React.ReactNode;
-  isLoading?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -23,11 +22,8 @@ const FlowScreenContainer: FC<FlowScreenContainerProps> = (props) => {
   return (
     <ScreenContainer {...rest} style={[style, theme.paddings.top.l]}>
       <Container style={[row, theme.margins.bottom.m]}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate(quitConfirmationRoute)}
-          style={theme.margins.left.auto}
-        >
-          <Svg color={theme.colors.text} name="close" width={32} height={32} />
+        <TouchableOpacity onPress={() => navigation.navigate(quitConfirmationRoute)} style={theme.margins.left.auto}>
+          <Svg color="text" name="close" width={32} height={32} />
         </TouchableOpacity>
       </Container>
       {children}
