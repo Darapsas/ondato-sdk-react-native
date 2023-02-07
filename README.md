@@ -15,8 +15,6 @@ SDK supports iOS 12.0 and up, Android from 5.0.0 version and up.
 
 ### 1. Adding the SDK dependency
 
-```npm install --save ondato-sdk-react-native```
-
 ```npm install --save https://github.com/ondato/ondato-sdk-react-native```
 
 ### 2. Creating the SDK configuration
