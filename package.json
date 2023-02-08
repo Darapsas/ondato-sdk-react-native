@@ -34,7 +34,7 @@
     "ios",
     "android"
   ],
-  "repository": "https://gitlab.com/ondato/idv-sdk-reactnative",
+  "repository": "https://github.com/ondato/ondato-sdk-react-native",
   "author": "Ondato",
   "license": "MIT",
   "publishConfig": {
@@ -68,6 +68,7 @@
     "react": "16.13.1",
     "react-i18next": "^12.0.0",
     "react-native": "0.63.4",
+    "react-native-facetec": "git+https://github.com/ondato/ondato-facetec-react-native.git",
     "react-native-builder-bob": "^0.20.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.8.0",
@@ -90,7 +91,7 @@
     "lottie-react-native": "^5.1.4",
     "react": "*",
     "react-native": "*",
-    "react-native-facetec": "github:VSaulis/facetec-test",
+    "react-native-facetec": "git+https://github.com/ondato/ondato-facetec-react-native.git",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-reanimated": "2.10.0",
@@ -131,8 +132,5 @@
       "module",
       "typescript"
     ]
-  },
-  "dependencies": {
-    "react-native-facetec": "git+https://github.com/ondato/ondato-facetec-react-native.git"
   }
 }
