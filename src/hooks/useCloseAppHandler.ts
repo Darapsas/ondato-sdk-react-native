@@ -12,8 +12,9 @@ const useCloseAppHandler = (onClose: () => void) => {
   );
 
   useEffect(() => {
-    AppState.addEventListener('change', handleOnAppStateChange);
-    return () => AppState.removeEventListener('change', handleOnAppStateChange);
+    const subscription = AppState.addEventListener('change', handleOnAppStateChange);
+
+    return () => subscription.remove();
   }, [handleOnAppStateChange]);
 };
 
