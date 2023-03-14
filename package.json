@@ -62,7 +62,7 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
     "@react-native-community/eslint-config": "^3.0.2",
-    "@release-it/conventional-changelog": "^2.0.0",
+    "@release-it/conventional-changelog": "^5.0.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/react": "^18.0.28",
     "@types/react-native": "^0.71.3",
@@ -109,7 +109,7 @@
       "tagName": "v${version}"
     },
     "npm": {
-      "publish": true
+      "publish": false
     },
     "github": {
       "release": true
