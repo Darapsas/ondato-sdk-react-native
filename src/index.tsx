@@ -9,7 +9,7 @@ import { ScreenConfigProvider } from './core/screens-config/provider';
 import { ThemeProvider } from './theme/provider';
 import { Callbacks, UserConfig } from './modules/kyc/types';
 import { ErrorBoundary } from './core/error-boundary';
-import { ConfigurableTheme } from './theme/types';
+import { ConfigurableColors, ConfigurableTheme } from './theme/types';
 import { Locales } from './i18n/constants';
 import { setupTranslations } from './i18n';
 import { GlobalLoader } from './core/global-loader';
@@ -77,3 +77,5 @@ const OndatoSdk: FC<OndatoSdkProps> = (props) => {
 };
 
 export default memo(OndatoSdk);
+
+export { UserConfig, ConfigurableColors, ConfigurableTheme };
